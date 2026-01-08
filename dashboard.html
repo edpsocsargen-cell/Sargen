@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <!-- NOTIFICATION BELL -->
+        <div class="dropdown">
+          <button
+            class="btn btn-light position-relative"
+            data-bs-toggle="dropdown"
+          >
+            🔔
+            <span
+              id="notifCount"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style="display: none"
+            ></span>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end" id="notifList">
+            <li class="dropdown-item text-muted">No notifications</li>
+          </ul>
+        </div>
+
+        <a href="beds.html" class="btn btn-light">Beds</a>
+        <button onclick="logout()" class="btn btn-danger">Logout</button>
+      </div>
+    </nav>
+
+    <!-- NOTIFICATIONS -->
+    <div class="container">
+      <div id="notify"></div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div class="container">
+      <div class="row g-4">
+        <!-- CREATE POST -->
+        <div class="col-md-6">
+          <div class="card shadow">
+            <div class="card-header bg-success text-white">Create Post</div>
+            <div class="card-body">
+              <textarea id="post" class="form-control mb-2"></textarea>
+              <button class="btn btn-success w-100" onclick="sendPost()">
+                Submit Post
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOOK APPOINTMENT -->
+        <div class="col-md-6">
+          <div class="card shadow">
+            <div class="card-header bg-info text-white">Book Appointment</div>
+            <div class="card-body">
+              <select id="doctor" class="form-select mb-2"></select>
+              <input id="date" type="date" class="form-control mb-2" />
+              <button class="btn btn-info w-100" onclick="book()">Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-5" />
+
+      <!-- ACTIVITY + NEWS -->
+      <div class="row g-4">
+        <!-- USER ACTIVITY -->
+        <div class="col-md-6">
+          <div class="card shadow mb-3">
+            <div class="card-header bg-secondary text-white">My Activity</div>
+            <div class="card-body" id="activity">Loading...</div>
+          </div>
+
+          <h6>My Posts</h6>
+          <div id="myposts">Loading...</div>
+        </div>
+
+        <!-- WHAT'S NEW -->
+        <div class="col-md-6">
+          <div class="card shadow">
+            <div class="card-header bg-warning">What’s New</div>
+            <div class="card-body" id="news">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* SECURITY */
+      if (!localStorage.getItem("token")) {
+        window.location = "login.html";
+      }
+
+      function logout() {
+        localStorage.clear();
+        window.location = "index.html";
+      }
+
+      function notify(msg, type = "success") {
+        document.getElementById("notify").innerHTML = `
+          <div class="alert alert-${type}">
+            ${msg}
+          </div>`;
+      }
+
+      /* LOAD DOCTORS */
+      fetch("http://localhost:3000/api/doctors", {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          const select = document.getElementById("doctor");
+          if (data.length === 0) {
+            select.innerHTML = "<option>No doctors available</option>";
+            return;
+          }
+          data.forEach((d) => {
+            select.innerHTML += `
+              <option value="${d.name}">
+                ${d.name} - ${d.specialization}
+              </option>`;
+          });
+        });
+
+      /* SEND POST */
+      function sendPost() {
+        fetch("http://localhost:3000/api/posts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ content: post.value }),
+        }).then(() => notify("Post submitted and awaiting approval", "info"));
+      }
+
+      /* BOOK APPOINTMENT */
+      function book() {
+        fetch("http://localhost:3000/api/appointments", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            doctor: doctor.value,
+            date: date.value,
+          }),
+        }).then(() =>
+          notify("Appointment submitted and awaiting approval", "info")
+        );
+      }
+
+      /* USER ACTIVITY */
+      fetch("http://localhost:3000/api/appointments", {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          const div = document.getElementById("activity");
+          div.innerHTML = "";
+          if (data.length === 0) {
+            div.innerHTML = "<p class='text-muted'>No activity yet</p>";
+            return;
+          }
+          data.forEach((a) => {
+            div.innerHTML += `
+              <p>
+                Appointment with <b>${a.doctor}</b> on ${a.date}
+                <span class="badge bg-${
+                  a.status === "approved"
+                    ? "success"
+                    : a.status === "rejected"
+                    ? "danger"
+                    : "warning"
+                }">${a.status}</span>
+              </p>`;
+          });
+        });
+
+      /* MY POSTS */
+      fetch("http://localhost:3000/api/posts", {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          const div = document.getElementById("myposts");
+          div.innerHTML = "";
+          if (data.length === 0) {
+            div.innerHTML = "<p class='text-muted'>No posts yet</p>";
+            return;
+          }
+          data.forEach((p) => {
+            div.innerHTML += `
+              <p>
+                ${p.content}
+                <span class="badge bg-${
+                  p.status === "approved"
+                    ? "success"
+                    : p.status === "rejected"
+                    ? "danger"
+                    : "warning"
+                }">${p.status}</span>
+              </p>`;
+          });
+        });
+
+      /* ANNOUNCEMENTS */
+      fetch("http://localhost:3000/api/announcements", {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          const div = document.getElementById("news");
+          div.innerHTML = "";
+          if (data.length === 0) {
+            div.innerHTML = "<p class='text-muted'>No announcements</p>";
+            return;
+          }
+          data.forEach((n) => {
+            div.innerHTML += `
+              <div class="mb-3">
+                <h6>${n.title}</h6>
+                <p>${n.content}</p>
+                <small class="text-muted">${n.created_at}</small>
+              </div>
+              <hr>`;
+          });
+        });
+
+      /* NOTIFICATIONS */
+      function loadNotifications() {
+        let notifications = [];
+
+        fetch("http://localhost:3000/api/posts", {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
+          .then((res) => res.json())
+          .then((posts) => {
+            posts.forEach((p) => {
+              if (p.status !== "pending") {
+                notifications.push(`Post "${p.content}" was ${p.status}`);
+              }
+            });
+          });
+
+        fetch("http://localhost:3000/api/appointments", {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
+          .then((res) => res.json())
+          .then((appts) => {
+            appts.forEach((a) => {
+              if (a.status !== "pending") {
+                notifications.push(
+                  `Appointment with ${a.doctor} was ${a.status}`
+                );
+              }
+            });
+
+            renderNotifications(notifications);
+          });
+      }
+
+      function renderNotifications(list) {
+        const count = document.getElementById("notifCount");
+        const ul = document.getElementById("notifList");
+
+        ul.innerHTML = "";
+
+        if (list.length === 0) {
+          count.style.display = "none";
+          ul.innerHTML = `<li class="dropdown-item text-muted">No notifications</li>`;
+          return;
+        }
+
+        count.style.display = "inline";
+        count.innerText = list.length;
+
+        list.forEach((n) => {
+          ul.innerHTML += `<li class="dropdown-item">${n}</li>`;
+        });
+      }
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        window.location.href = "login.html";
+      }
+
+      loadNotifications();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Socsargen County Hospital</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      .top-bar {
+        background: #0b5d3b;
+        color: white;
+        font-size: 14px;
+        padding: 6px 20px;
+      }
+
+      .navbar-main {
+        background: #0f7b4a;
+        padding: 15px 0;
+      }
+
+      .navbar-main a {
+        color: white;
+        margin: 0 12px;
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .login-icon {
+        font-size: 22px;
+      }
+
+      .login-icon:hover {
+        color: #c8f0dd;
+      }
+      .hero {
+        height: 90vh;
+        display: flex;
+        align-items: center;
+        color: white;
+
+        background-size: cover;
+        background-position: top;
+        background-repeat: no-repeat;
+
+        animation: heroFade 25s infinite;
+      }
+
+      @keyframes heroFade {
+        0% {
+          background-image: linear-gradient(
+              rgba(0, 0, 0, 0.45),
+              rgba(0, 0, 0, 0.45)
+            ),
+            url("image/gwap.jpg");
+        }
+
+        20% {
+          background-image: linear-gradient(
+              rgba(0, 0, 0, 0.45),
+              rgba(0, 0, 0, 0.45)
+            ),
+            url("image/er.jpg");
+        }
+
+        40% {
+          background-image: linear-gradient(
+              rgba(0, 0, 0, 0.45),
+              rgba(0, 0, 0, 0.45)
+            ),
+            url("image/ke.jpg");
+        }
+
+        60% {
+          background-image: linear-gradient(
+              rgba(0, 0, 0, 0.45),
+              rgba(0, 0, 0, 0.45)
+            ),
+            url("image/heart.jpg");
+        }
+
+        80%,
+        100% {
+          background-image: linear-gradient(
+              rgba(0, 0, 0, 0.45),
+              rgba(0, 0, 0, 0.45)
+            ),
+            url("image/tahi.jpg");
+        }
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+      }
+
+      .help-card {
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        transition: 0.3s;
+      }
+
+      .help-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .icon-box {
+        width: 70px;
+        height: 70px;
+        background: #1a9b5f;
+        color: white;
+        font-size: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- TOP BAR -->
+    <div class="top-bar d-flex justify-content-between">
+      <div>
+        📍 L. Arradaza St., Bula-Lagao Road, Lagao, General Santos City | 📞
+        0962-316-0213
+      </div>
+      <div>Contact Us</div>
+    </div>
+
+    <!-- NAV -->
+    <div class="navbar-main d-flex justify-content-end align-items-center px-4">
+      <a href="#">Home</a>
+      <a href="#">Our Services</a>
+      <a href="#">Our Doctors</a>
+      <a href="#">About Us</a>
+      <a href="#">Contact Us</a>
+
+      <!-- Login / Signup Icon -->
+      <a href="login.html" class="ms-3 login-icon" title="Login / Sign up">
+        <i class="bi bi-person-circle"></i>
+      </a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <h1>Welcome to Socsargen County Hospital</h1>
+        <p>Leading with Innovation, Serving with Compassion.</p>
+        <a class="btn btn-success btn-lg mt-3">Learn More</a>
+      </div>
+    </section>
+
+    <!-- HELP SECTION -->
+    <div class="container my-5 text-center">
+      <h2 class="fw-bold">
+        Get high-quality healthcare in the heart of General Santos City
+      </h2>
+      <p class="text-muted mb-5">How can we help you today?</p>
+
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+          <div class="help-card d-flex align-items-center">
+            <div class="icon-box">👨‍⚕️</div>
+            <h5 class="ms-3 text-success fw-bold">Find a Doctor</h5>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="help-card d-flex align-items-center">
+            <div class="icon-box">🏥</div>
+            <h5 class="ms-3 text-success fw-bold">
+              Book an Executive Check Up
+            </h5>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="help-card d-flex align-items-center">
+            <div class="icon-box">💊</div>
+            <h5 class="ms-3 text-success fw-bold">
+              Learn about our Wellness Packages
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark text-white text-center p-4">
+      © 2026 Socsargen County Hospital. All right reserved.
+    </footer>
+  </body>
+</html>
